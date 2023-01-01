@@ -72,15 +72,15 @@ function deleteRow(rowId) {
 
 function deleteColumn(columnId) {
     updateColumnIndex(columnId);
-    tableData.rows[0].cells[columnId].remove();
-    for (let i = 0; i < tBody.rows.length; i++){
-        tBody.rows[i].cells[columnId].remove();
+    tableData.rows[0].cells[columnId].remove(); //remove table header
+    for (let i = 0; i < tBody.rows.length; i++){ 
+        tBody.rows[i].cells[columnId].remove(); // remove rows under the column
     }
     tableColumns--;
     if (tableColumns === 1) {
-        for (let i = 0; i < tBody.rows.length; i++) {
+        //for (let i = 0; i < tBody.rows.length; i++) {
             tBody.innerHTML= '';
-        }
+        //}
     }
 
 }
