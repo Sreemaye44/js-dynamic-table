@@ -19,9 +19,6 @@ function clearAllData() {
     location.reload();
 }
 
-let tableColumns = 1; //first column number is [1] as action is [0]
-let tableRows = 0;
-
 function addColumn() {
     const headData = document.getElementById("inputColumn").value;
     if (headData === '' || headData === null) {
