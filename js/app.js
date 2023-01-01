@@ -2,6 +2,23 @@ const tableData = document.getElementById("tableData");
 const tableHead = document.getElementById("table-head");
 const tBody = document.getElementById("table-body");
 
+let tableColumns = getDataFromLocal("tableColumns") === null ? 1 : getDataFromLocal("tableColumns");
+let tableRows = getDataFromLocal("tableRows") === null ? 0 : getDataFromLocal("tableRows");
+let tableColumnsMapObject = getDataFromLocal("tableColumnsMapObject") === null ? {} : getDataFromLocal("tableColumnsMapObject");
+let tableRowsMapObject = getDataFromLocal("tableRowsMapObject") === null ? {} : getDataFromLocal("tableRowsMapObject");
+
+
+window.onload = (() => {
+    for (let i = 1; i < tableColumns; i++) {
+        insertColumnCells(tableColumnsMapObject[i], i)
+    }
+});
+
+function clearAllData() {
+    clearLocalStorage();
+    location.reload();
+}
+
 let tableColumns = 1; //first column number is [1] as action is [0]
 let tableRows = 0;
 
@@ -10,24 +27,28 @@ function addColumn() {
     if (headData === '' || headData === null) {
         alert("Column name can't be blank!"); //column should be inserted
         return;
-    } 
+    }
+    insertColumnCells(headData, tableColumns);
+    tableColumnsMapObject[tableColumns] = headData;
+    saveDataToLocal("tableColumnsMapObject",tableColumnsMapObject);
+    saveDataToLocal("tableColumns", ++tableColumns);
+    document.getElementById("inputColumn").value = "";
+
+}
+
+function insertColumnCells(columnName,columnNo) {
     const th = document.createElement('th');
+
     th.innerHTML =`<span>${headData}</span> <input type="button"  class="btn btn-danger" value="X" onclick="deleteColumn(${tableColumns})"></input>` ; //set column name and cross button
     tableHead.appendChild(th);
-    for (let i = 0; i < tBody.rows.length; i++){ 
-            
-
-            tBody.rows[i].insertCell(tableColumns).innerHTML = 
-            `
+    for (let i = 0; i < tBody.rows.length; i++){
+            tBody.rows[i].insertCell(tableColumns).innerHTML =             `
                 <td>
-                <input type="text" class="form-control d-inline-block" placeholder="Insert ${tableData.rows[0].cells[tableColumns].innerText}">
+                <input type="text" class="form-control d-inline-block" placeholder="Insert ${tableData.rows[0].cells[columnNo].innerText}">
                 <span class="d-none"></span>
                 </td>
             `
     }
-    tableColumns++;
-    document.getElementById("inputColumn").value = "";
-
 }
 
 function addRow() {
@@ -76,7 +97,8 @@ function deleteColumn(columnId) {
     for (let i = 0; i < tBody.rows.length; i++){ 
         tBody.rows[i].cells[columnId].remove(); // remove rows under the column
     }
-    tableColumns--;
+    saveDataToLocal("tableColumnsMapObject", tableColumnsMapObject);
+    saveDataToLocal("tableColumns", --tableColumns);
     if (tableColumns === 1) {
         //for (let i = 0; i < tBody.rows.length; i++) {
             tBody.innerHTML= '';
@@ -100,8 +122,10 @@ function deleteColumn(columnId) {
 
 function updateColumnIndex(columnId) {
     for (let i = columnId + 1; i < tableData.rows[0].cells.length; i++){
+        tableColumnsMapObject[i-1] = tableColumnsMapObject[i];
         tableData.rows[0].cells[i].lastElementChild.setAttribute("onclick", `deleteColumn(${i - 1})`);
     }
+    delete tableColumnsMapObject[tableData.rows[0].cells.length-1];
 }
 
 function saveRow(rowId) {
@@ -130,5 +154,23 @@ function editRow(rowId) {
     }
     selectedRow.cells[0].firstElementChild.setAttribute("onclick", `saveRow(${rowId})`);
     
+}
+
+function getDataFromLocal(key) {
+    return JSON.parse(localStorage.getItem(key))
+        
+        ;
+}
+
+function saveDataToLocal(key, value) {
+    localStorage.setItem(key, JSON.stringify(value));
+}
+
+function removeDataFromLocal(key) {
+    localStorage.removeItem(key);
+}
+
+function clearLocalStorage() {
+    localStorage.clear();    
 }
 
