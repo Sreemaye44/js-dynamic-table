@@ -36,7 +36,7 @@ function addColumn() {
 function insertColumnCells(columnName,columnNo) {
     const th = document.createElement('th');
 
-    th.innerHTML =`<span>${headData}</span> <input type="button"  class="btn btn-danger" value="X" onclick="deleteColumn(${tableColumns})"></input>` ; //set column name and cross button
+    th.innerHTML =`<span>${columnName}</span> <input type="button"  class="btn btn-danger" value="X" onclick="deleteColumn(${tableColumns})"></input>` ; //set column name and cross button
     tableHead.appendChild(th);
     for (let i = 0; i < tBody.rows.length; i++){
             tBody.rows[i].insertCell(tableColumns).innerHTML =             `
