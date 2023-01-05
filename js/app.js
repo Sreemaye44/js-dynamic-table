@@ -5,7 +5,7 @@ const tBody = document.getElementById("table-body");
 let tableColumns = getDataFromLocal("tableColumns") === null ? 1 : getDataFromLocal("tableColumns");
 let tableRows = getDataFromLocal("tableRows") === null ? 0 : getDataFromLocal("tableRows");
 let tableColumnsMapObject = getDataFromLocal("tableColumnsMapObject") === null ? {} : getDataFromLocal("tableColumnsMapObject");
-let tableRowsMapObject = getDataFromLocal("tableRowsMapObject") === null ? {} : getDataFromLocal("tableRowsMapObject");
+//let tableRowsMapObject = getDataFromLocal("tableRowsMapObject") === null ? {} : getDataFromLocal("tableRowsMapObject");
 
 
 window.onload = (() => {
@@ -36,10 +36,10 @@ function addColumn() {
 function insertColumnCells(columnName,columnNo) {
     const th = document.createElement('th');
 
-    th.innerHTML =`<span>${columnName}</span> <input type="button"  class="btn btn-danger" value="X" onclick="deleteColumn(${tableColumns})"></input>` ; //set column name and cross button
+    th.innerHTML =`<span>${columnName}</span> <input type="button"  class="btn btn-danger" value="X" onclick="deleteColumn(${columnNo})"></input>` ; //set column name and cross button
     tableHead.appendChild(th);
     for (let i = 0; i < tBody.rows.length; i++){
-            tBody.rows[i].insertCell(tableColumns).innerHTML =             `
+            tBody.rows[i].insertCell(columnNo).innerHTML =             `
                 <td>
                 <input type="text" class="form-control d-inline-block" placeholder="Insert ${tableData.rows[0].cells[columnNo].innerText}">
                 <span class="d-none"></span>
@@ -90,6 +90,7 @@ function deleteRow(rowId) {
 
 function deleteColumn(columnId) {
     updateColumnIndex(columnId);
+    console.log(columnId);
     tableData.rows[0].cells[columnId].remove(); //remove table header
     for (let i = 0; i < tBody.rows.length; i++){ 
         tBody.rows[i].cells[columnId].remove(); // remove rows under the column
@@ -119,8 +120,9 @@ function deleteColumn(columnId) {
 
 function updateColumnIndex(columnId) {
     for (let i = columnId + 1; i < tableData.rows[0].cells.length; i++){
-        tableColumnsMapObject[i-1] = tableColumnsMapObject[i];
+        tableColumnsMapObject[i - 1] = tableColumnsMapObject[i];
         tableData.rows[0].cells[i].lastElementChild.setAttribute("onclick", `deleteColumn(${i - 1})`);
+        
     }
     delete tableColumnsMapObject[tableData.rows[0].cells.length-1];
 }
@@ -154,9 +156,7 @@ function editRow(rowId) {
 }
 
 function getDataFromLocal(key) {
-    return JSON.parse(localStorage.getItem(key))
-        
-        ;
+    return JSON.parse(localStorage.getItem(key));
 }
 
 function saveDataToLocal(key, value) {
